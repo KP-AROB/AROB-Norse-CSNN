@@ -1,12 +1,30 @@
-name: MNIST
-task: MNIST
-data_dir: "./data"
-log_dir: "./logs"
-seed: 1234
+network:
+  name: DoubleConvNet
+  parameters: 
+    n_input: 1
+    n_output: 10
+    in_features: 32
+    out_features: 64
+    alpha: 80
 
-batch_size: 256
-input_size: 28
-max_latency: 50
+dataset:
+  name: MNIST
+  parameters:
+    data_dir: ./data
+    n_classes: 10
+    batch_size: 8
+    resize: 28
+    max_latency: 50
 
-epochs: 1
-lr: .001
+encoder:
+  name: ConstantCurrentLIFEncoder
+  parameters:
+    t_max: 80
+
+experiment:
+  name: MNIST
+  parameters:
+    log_dir: ./logs
+    seed: 1234
+    epochs: 1
+    lr: .001
