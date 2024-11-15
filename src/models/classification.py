@@ -1,8 +1,9 @@
 import torch
 
-class SimpleCLSModel(torch.nn.Module):
+
+class CLSModel(torch.nn.Module):
     def __init__(self, encoder, snn, decoder):
-        super(SimpleCLSModel, self).__init__()
+        super(CLSModel, self).__init__()
         self.encoder = encoder
         self.snn = snn
         self.decoder = decoder

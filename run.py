@@ -3,14 +3,13 @@ import os
 import logging
 from argparse import ArgumentParser
 from src.utils.dataloaders import load_mnist_dataloader, load_image_folder_dataloader
-from src.models.classification import SimpleCLSModel
+from src.models.classification import CLSModel
 from src.utils.decoders import softmax_decoder
-from src.networks.classification import DoubleConvNet
-from norse.torch import ConstantCurrentLIFEncoder
 from src.experiment.classification import ClassificationExperiment
 from torch.utils.tensorboard import SummaryWriter
 from uuid import uuid4
-from src.utils.parameters import write_params_to_file, load_parameters
+from src.utils.parameters import write_params_to_file, load_parameters, instanciate_cls
+
 if __name__ == "__main__":
 
     logging_message = "[AROB-2025-KAPTIOS]"
@@ -68,25 +67,28 @@ if __name__ == "__main__":
     ## ========== MODEL ========== ##
 
     DEVICE = torch.device("cuda") if gpu else torch.device("cpu")
+    input_encoder = instanciate_cls(
+        params['encoder']['module'], params['encoder']['name'], enc_params)
 
-    # model = SimpleCLSModel(
-    #     encoder=ConstantCurrentLIFEncoder(
-    #         seq_length=enc_params["max_latency"]),
-    #     snn=ConvNet(alpha=80, n_classes=n_classes,
-    #                 feature_size=params["input_size"]),
-    #     decoder=softmax_decoder
-    # ).to(DEVICE)
+    net = instanciate_cls('src.networks.classification',
+                          params['network']['name'], net_params)
 
-    ## ========== TRAINING ========== ##
+    model = CLSModel(
+        encoder=input_encoder,
+        snn=net,
+        decoder=softmax_decoder
+    ).to(DEVICE)
 
-    # writer = SummaryWriter(log_dir=log_dir, flush_secs=60)
+    # ========== TRAINING ========== ##
 
-    # print(f'Running on device : {DEVICE}')
-    # experiment = ClassificationExperiment(
-    #     model=model,
-    #     writer=writer,
-    #     lr=params["lr"],
-    #     log_interval=log_interval,
-    #     device=DEVICE)
+    writer = SummaryWriter(log_dir=log_dir, flush_secs=60)
 
-    # experiment.fit(train_dl, test_dl, params["epochs"])
+    logging.info(f'Running on device : {DEVICE}')
+    experiment = ClassificationExperiment(
+        model=model,
+        writer=writer,
+        lr=xp_params["lr"],
+        log_interval=log_interval,
+        device=DEVICE)
+
+    experiment.fit(train_dl, test_dl, xp_params["epochs"])

@@ -1,6 +1,7 @@
 import os
 import yaml
 import logging
+import importlib
 
 
 def write_params_to_file(params: dict, out_dir: str):
@@ -69,3 +70,32 @@ def load_parameters(path: str):
         logging.error(e)
         exit()
     return parameters
+
+
+def instanciate_cls(module_name: str, class_name: str, params: dict):
+    """Instantiate a class
+
+    Args:
+        module_name (str): The name of the module holding the class
+        class_name (str): The name of the class to instanciate
+        params (dict): The parameters dictionary to feed to the class
+
+    Raises:
+        AttributeError: Wrong parameters
+        ModuleNotFoundError: Module does not exist
+    """
+    try:
+        module_ = importlib.import_module(module_name)
+        if not hasattr(module_, class_name):
+            raise AttributeError(
+                f"Class '{class_name}' not found in module '{module_name}'")
+
+        class_ = getattr(module_, class_name)
+        mod = class_(**params)
+        return mod
+    except ModuleNotFoundError:
+        raise ModuleNotFoundError(f"Module '{module_name}' not found")
+    except AttributeError as e:
+        raise e
+    except Exception as e:
+        raise Exception(f"An error occurred: {e}")

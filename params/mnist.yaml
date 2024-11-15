@@ -1,8 +1,11 @@
+variables:
+  image_size: &image_size 28
+  n_classes: &n_classes 10
 network:
   name: DoubleConvNet
   parameters: 
-    n_input: 1
-    n_output: 10
+    in_shape: !!python/tuple [1, *image_size, *image_size]
+    n_output: *n_classes
     in_features: 32
     out_features: 64
     alpha: 80
@@ -11,15 +14,15 @@ dataset:
   name: MNIST
   parameters:
     data_dir: ./data
-    n_classes: 10
-    batch_size: 8
-    resize: 28
-    max_latency: 50
+    n_classes: *n_classes
+    batch_size: 128
+    resize: *image_size
 
 encoder:
   name: ConstantCurrentLIFEncoder
+  module: norse.torch
   parameters:
-    t_max: 80
+    seq_length: 50
 
 experiment:
   name: MNIST
