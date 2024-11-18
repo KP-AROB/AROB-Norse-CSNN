@@ -32,3 +32,4 @@ experiment:
     seed: 1234
     epochs: 1
     lr: .001
+    criterion: NLLLoss

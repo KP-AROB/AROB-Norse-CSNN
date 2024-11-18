@@ -23,12 +23,13 @@ encoder:
   name: PoissonEncoder
   module: norse.torch
   parameters:
-    seq_length: 50
+    seq_length: 80
 
 experiment:
   name: CBIS
   parameters:
     log_dir: ./logs
     seed: 1234
-    epochs: 1
+    epochs: 10
     lr: .001
+    criterion: BCELoss

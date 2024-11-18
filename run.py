@@ -44,7 +44,7 @@ if __name__ == "__main__":
         'Initialization of the experiment protocol - {}'.format(experiment_name))
     log_dir = os.path.join(xp_params["log_dir"], experiment_name)
     os.makedirs(log_dir, exist_ok=True)
-    write_params_to_file(vars(args), log_dir)
+    write_params_to_file(params, log_dir)
     log_interval = max(100 // data_params["batch_size"], 1)
 
     # ========== DATALOADER ========== ##
@@ -96,6 +96,7 @@ if __name__ == "__main__":
         writer=writer,
         lr=xp_params["lr"],
         log_interval=log_interval,
+        criterion=xp_params['criterion'],
         device=DEVICE)
 
     experiment.fit(train_dl, test_dl, xp_params["epochs"])

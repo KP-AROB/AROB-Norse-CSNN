@@ -72,7 +72,7 @@ def load_parameters(path: str):
     return parameters
 
 
-def instanciate_cls(module_name: str, class_name: str, params: dict):
+def instanciate_cls(module_name: str, class_name: str, params: dict = None):
     """Instantiate a class
 
     Args:
@@ -91,7 +91,10 @@ def instanciate_cls(module_name: str, class_name: str, params: dict):
                 f"Class '{class_name}' not found in module '{module_name}'")
 
         class_ = getattr(module_, class_name)
-        mod = class_(**params)
+        if params:
+            mod = class_(**params)
+        else:
+            mod = class_()
         return mod
     except ModuleNotFoundError:
         raise ModuleNotFoundError(f"Module '{module_name}' not found")
