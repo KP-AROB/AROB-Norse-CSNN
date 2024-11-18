@@ -2,7 +2,7 @@ import torch
 import os
 import logging
 from argparse import ArgumentParser
-from src.utils.dataloaders import load_mnist_dataloader, load_image_folder_dataloader
+from src.utils.dataloaders import load_mnist_dataloader, load_image_folder_dataloader, load_cbis_ddsm_dataloader
 from src.models.classification import CLSModel
 from src.utils.decoders import softmax_decoder
 from src.experiment.classification import ClassificationExperiment
@@ -55,6 +55,13 @@ if __name__ == "__main__":
             data_params["resize"],
             data_params["batch_size"],
             gpu)
+    elif params['dataset']['name'] == 'CBIS':
+        train_dl, test_dl, n_classes = load_cbis_ddsm_dataloader(
+            data_params["data_dir"],
+            data_params["resize"],
+            data_params["batch_size"],
+            gpu
+        )
     else:
         train_dl, test_dl, n_classes = load_image_folder_dataloader(
             data_params["data_dir"],

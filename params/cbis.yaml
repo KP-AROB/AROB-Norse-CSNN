@@ -1,6 +1,6 @@
 variables:
   image_size: &image_size 28
-  n_classes: &n_classes 10
+  n_classes: &n_classes 2
   
 network:
   name: DoubleConvNet
@@ -12,9 +12,9 @@ network:
     alpha: 80
 
 dataset:
-  name: MNIST
+  name: CBIS
   parameters:
-    data_dir: ./data
+    data_dir: /home/nvidia/projects/Research/AROB-CBIS-DDSM-Preparation/data/lesion/
     n_classes: *n_classes
     batch_size: 128
     resize: *image_size
@@ -26,7 +26,7 @@ encoder:
     seq_length: 50
 
 experiment:
-  name: MNIST
+  name: CBIS
   parameters:
     log_dir: ./logs
     seed: 1234

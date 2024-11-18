@@ -20,7 +20,6 @@ def load_image_folder_dataloader(
                 transforms.Grayscale(),
                 transforms.ToTensor(),
                 transforms.Resize((image_size, image_size)),
-                transforms.Normalize((0.1307,), (0.3081,)),
             ]
         )
     )
@@ -124,3 +123,56 @@ def load_mnist_dataloader(
     n_classes = len(train_dataset.classes)
 
     return train_loader, test_loader, n_classes
+
+
+def load_cbis_ddsm_dataloader(
+        data_dir: str,
+        image_size: int,
+        batch_size: int = 16,
+        gpu: bool = True):
+
+    n_workers = gpu * 4 * torch.cuda.device_count()
+
+    train_dataset = torchvision.datasets.ImageFolder(
+        data_dir + '/train',
+        transform=transforms.Compose(
+            [
+                transforms.Grayscale(),
+                transforms.ToTensor(),
+                transforms.Resize((image_size, image_size)),
+            ]
+        )
+    )
+
+    test_dataset = torchvision.datasets.ImageFolder(
+        data_dir + '/test',
+        transform=transforms.Compose(
+            [
+                transforms.Grayscale(),
+                transforms.ToTensor(),
+                transforms.Resize((image_size, image_size)),
+            ]
+        )
+    )
+
+    n_classes = len(train_dataset.classes)
+    logging.info("Available labels in dataset : {}".format(
+        train_dataset.class_to_idx))
+
+    train_dataloader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=n_workers,
+        pin_memory=gpu,
+    )
+
+    val_dataloader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=n_workers,
+        pin_memory=gpu,
+    )
+
+    return train_dataloader, val_dataloader, n_classes
