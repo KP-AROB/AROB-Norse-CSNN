@@ -1,6 +1,7 @@
 variables:
   image_size: &image_size 28
   n_classes: &n_classes 10
+  
 network:
   name: DoubleConvNet
   parameters: 

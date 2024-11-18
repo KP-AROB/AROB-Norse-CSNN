@@ -26,7 +26,6 @@ class DoubleConvNet(AbstractClassificationSNN):
 
         self.conv1 = torch.nn.Conv2d(in_shape[0], in_features, 3, 1)
         self.conv2 = torch.nn.Conv2d(in_features, out_features, 3, 1)
-        self.flatten = torch.nn.Flatten()
         conv1_output_size = in_shape[1] - 2
         pooled1_output_size = conv1_output_size // 2
         conv2_output_size = pooled1_output_size - 2
@@ -58,7 +57,7 @@ class DoubleConvNet(AbstractClassificationSNN):
             z = torch.nn.functional.max_pool2d(z, 2, 2)
             z, s1 = self.lif1(z, s1)
 
-            z = self.flatten(z)
+            z = z.view(batch_size, -1)
             z = self.fc(z)
             z, s2 = self.lif2(z, s2)
             v, so = self.out(torch.nn.functional.relu(z), so)
